@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Hi, I'm update.html from community</h1>
+  <h3>UPDATE 폼</h3>
+  <form action="" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input class="btn btn-info" type="submit">
+  </form>
+  <hr>
+  <a class="btn btn-primary" href="{% url 'community:detail' review.pk %}">[뒤로가기]</a>
+{% endblock %}

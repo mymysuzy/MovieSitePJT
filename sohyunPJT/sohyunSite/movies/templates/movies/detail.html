@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>{{ movie.title }}</h1>
+    <p>
+      {% for genre in movie.genres.all %}
+      {{ genre.name }}
+      {% endfor %}
+    </p>
+
+    <hr>
+
+    <p>popularity : {{ movie.popularity }}</p>
+
+    <hr>
+
+    <p>vote average : {{ movie.vote_average }}</p>
+
+    <hr>
+
+    <p>overview : {{ movie.overview }}</p>
+
+    <hr>
+
+    <img src="{{ movie.poster_path }}" alt="">
+
+  <hr>
+
+  <!--댓글 및 점수주기-->
+
+  <div class="container">
+  {% for rating in ratings %}
+    <li>
+      {{ rating.user }} / {{ rating.score }}점 - {{ rating.comment }} - {{ rating.created_at }}
+      {% if request.user == rating.user %}
+        <form action="{% url 'movies:delete_rating' movie.pk rating.pk %}" method="POST" class="d-inline">
+          {% csrf_token %}
+          <input type="submit" value="DELETE">
+        </form>
+      {% endif %}
+    </li>
+  {% empty %}
+    <p>아직 작성된 평점이 없습니다.</p>
+  {% endfor %}
+  
+  <br>
+  {% if request.user.id in user_ids %}
+    <strong>이미 평점을 등록한 영화입니다.</strong>
+  {% else %}
+    {% if request.user.is_authenticated %}
+      <div class="text-center"><strong>1~5점까지 평점을 남겨주세요.</strong></div><br>
+      <form action="{% url 'movies:create_rating' movie.pk %}" method="POST">
+        {% csrf_token %}
+        {{ rating_form }}
+        <input class="btn btn-success" type="submit">
+      </form>
+    {% else %}
+      <a href="{% url 'accounts:login' %}" class="btn btn-dark">[평점을 남기시려면 로그인하세요.]</a>
+    {% endif %}
+  {% endif %}
+  </div>
+  <div class="container d-flex flex-row-reverse">
+    <a class="btn btn-primary" role="button" href="{% url 'movies:index' %}">뒤로가기</a>
+  </div>
+  
+{% endblock content %}
+
+
